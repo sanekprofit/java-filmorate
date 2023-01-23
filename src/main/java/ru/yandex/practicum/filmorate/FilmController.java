@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 public class FilmController {
     private Map<Integer, Film> films = new HashMap<>();
+    private int generatorId = 0;
 
     @GetMapping("/films")
     public List<Film> getAllFilms() {
@@ -37,12 +38,17 @@ public class FilmController {
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
+        generatorId++;
+        film.setId(generatorId);
         films.put(film.getId(), film);
         return film;
     }
 
     @PutMapping(value = "/films")
     public Film updateFilm(@RequestBody Film film) {
+        if (film.getId() != films.get(film.getId()).getId()) {
+            throw new ValidationException("Ид не совпадают.");
+        }
         films.put(film.getId(), film);
         return film;
     }

@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 public class UserController {
     private Map<Integer, User> users = new HashMap<>();
+    private int generatorId = 0;
 
     @GetMapping("/users")
     public List<User> getUsers() {
@@ -31,18 +32,23 @@ public class UserController {
         if (user.getLogin().isEmpty() || user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы.");
         }
-        if (user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
+        if (user.toString().contains("name=null")) {
+            user.setName(user.getLogin());
+        }
+        generatorId++;
+        user.setId(generatorId);
         users.put(user.getId(), user);
         return user;
     }
 
     @PutMapping(value = "/users")
     public User updateUser(@RequestBody User user) {
+        if (user.getId() != users.get(user.getId()).getId()) {
+            throw new ValidationException("Ид не совпадают.");
+        }
         users.put(user.getId(), user);
         return user;
     }
