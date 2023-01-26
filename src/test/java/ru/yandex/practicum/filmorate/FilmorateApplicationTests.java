@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,8 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class FilmorateApplicationTests {
-    boolean thrown;
-    ValidationCheck validationCheck = new ValidationCheck();
+    @Autowired
+    UserController uc = new UserController();
+    @Autowired
+    FilmController fc = new FilmController();
     int duration = 100;
     String login = "login";
     String name = "name";
@@ -24,11 +26,6 @@ class FilmorateApplicationTests {
     LocalDate releaseDate = LocalDate.of(2000, 5, 12);
     LocalDate birthDay = LocalDate.of(1970, 11, 28);
 
-    @BeforeEach
-    void beforeEach() {
-        thrown = false;
-    }
-
     @Test
     void emptyUserNameShouldSetLoginForName() {
         User user = new User();
@@ -36,7 +33,7 @@ class FilmorateApplicationTests {
         user.setLogin(login);
         user.setEmail(email);
         user.setBirthday(birthDay);
-        validationCheck.validationCheckUser(user);
+        uc.createUser(user);
         assertEquals("login", user.getName());
     }
 
@@ -46,14 +43,9 @@ class FilmorateApplicationTests {
         user.setId(1);
         user.setName(name);
         user.setLogin(login);
-        user.setEmail(email);
-        user.setBirthday(LocalDate.MAX);
-        try {
-            validationCheck.validationCheckUser(user);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+        user.setEmail("invalid mail");
+        user.setBirthday(birthDay);
+        assertThrows(ValidationException.class, () -> uc.createUser(user));
     }
 
     @Test
@@ -64,12 +56,7 @@ class FilmorateApplicationTests {
         user.setLogin(login);
         user.setEmail(email);
         user.setBirthday(LocalDate.MAX);
-        try {
-            validationCheck.validationCheckUser(user);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+        assertThrows(ValidationException.class, () -> uc.createUser(user));
     }
 
     @Test
@@ -79,12 +66,7 @@ class FilmorateApplicationTests {
         user.setName(name);
         user.setEmail(email);
         user.setBirthday(birthDay);
-        try {
-            validationCheck.validationCheckUser(user);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+        assertThrows(ValidationException.class, () -> uc.createUser(user));
     }
 
     @Test
@@ -94,12 +76,7 @@ class FilmorateApplicationTests {
         film.setDescription(description);
         film.setReleaseDate(releaseDate);
         film.setDuration(duration);
-        try {
-            validationCheck.validationCheckFilm(film);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+        assertThrows(ValidationException.class, () -> fc.createFilm(film));
     }
 
     @Test
@@ -113,12 +90,7 @@ class FilmorateApplicationTests {
                 "ng description");
         film.setReleaseDate(releaseDate);
         film.setDuration(duration);
-        try {
-            validationCheck.validationCheckFilm(film);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+        assertThrows(ValidationException.class, () -> fc.createFilm(film));
     }
 
     @Test
@@ -129,12 +101,7 @@ class FilmorateApplicationTests {
         film.setDescription(description);
         film.setReleaseDate(LocalDate.MIN);
         film.setDuration(duration);
-        try {
-            validationCheck.validationCheckFilm(film);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(true);
+        assertThrows(ValidationException.class, () -> fc.createFilm(film));
     }
 
     @Test
@@ -145,11 +112,6 @@ class FilmorateApplicationTests {
         film.setDescription(description);
         film.setReleaseDate(releaseDate);
         film.setDuration(-1);
-        try {
-            validationCheck.validationCheckFilm(film);
-        } catch (ValidationException e) {
-            thrown = true;
-        }
-        assertTrue(true);
+        assertThrows(ValidationException.class, () -> fc.createFilm(film));
     }
 }
