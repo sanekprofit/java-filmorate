@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class FilmorateApplicationTests {
     @Autowired
-    UserController uc = new UserController();
+    UserController uc;
     @Autowired
-    FilmController fc = new FilmController();
+    FilmController fc;
     int duration = 100;
     String login = "login";
     String name = "name";
