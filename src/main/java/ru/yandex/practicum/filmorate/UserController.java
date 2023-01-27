@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.EmptyArrayException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,6 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
-    ValidationCheck validationCheck = new ValidationCheck();
     private final Map<Integer, User> users = new HashMap<>();
     private int generatorId = 0;
 
@@ -31,7 +31,7 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         log.info("Получен POST запрос");
-        validationCheck.validationCheckUser(user);
+        validationCheck(user);
         generatorId++;
         user.setId(generatorId);
         users.put(user.getId(), user);
@@ -42,13 +42,32 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody User user) {
         log.info("Получен PUT запрос");
-        if (user.getId() != users.get(user.getId()).getId()) {
-            throw new ValidationException("Ид не совпадают.");
-        }
-        validationCheck.validationCheckUser(user);
+        validationCheck(user);
+        validationCheckPUTMethod(user);
         log.info("Пользователь до изменений: " + users.get(user.getId()));
         users.put(user.getId(), user);
         log.info("Изменённый пользователь: " + users.get(user.getId()));
         return user;
+    }
+
+    private void validationCheck(User user) {
+        if (user.toString().contains("email=null") || !user.getEmail().contains("@")) {
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @.");
+        }
+        if (user.toString().contains("login=null") || user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы.");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения не может быть в будущем.");
+        }
+        if (user.toString().contains("name=null")) {
+            user.setName(user.getLogin());
+        }
+    }
+
+    private void validationCheckPUTMethod(User user) {
+        if (user.getId() != users.get(user.getId()).getId()) {
+            throw new ValidationException("Ид не совпадают.");
+        }
     }
 }
