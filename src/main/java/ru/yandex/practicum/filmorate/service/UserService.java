@@ -17,22 +17,16 @@ import java.util.*;
 public class UserService {
     private final UserStorage userStorage;
     private int generatorId = 0;
-    private static final String GET_REQUEST_RECEIVED = "Получен GET запрос";
-    private static final String POST_REQUEST_RECEIVED = "Получен POST запрос";
-    private static final String PUT_REQUEST_RECEIVED = "Получен PUT запрос";
-    private static final String DELETE_REQUEST_RECEIVED = "Получен DELETE запрос";
 
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
     public List<User> getUsers() {
-        log.info(GET_REQUEST_RECEIVED);
         return new ArrayList<>(userStorage.getAll().values());
     }
 
     public User getUser(Long id) {
-        log.info(GET_REQUEST_RECEIVED);
         if (!userStorage.getAll().containsKey(id)) {
             log.error("Ошибка 404, пользователь не был найден в списке");
             throw new UserNotFoundException("Пользователь не найден.");
@@ -42,7 +36,6 @@ public class UserService {
     }
 
     public List<User> getUserFriends(Long id) {
-        log.info(GET_REQUEST_RECEIVED);
         if (!userStorage.getAll().containsKey(id)) {
             log.error("Ошибка 404, пользователь не был найден в списке");
             throw new UserNotFoundException("Пользователь не найден.");
@@ -55,7 +48,6 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(Long id, Long otherId) {
-        log.info(GET_REQUEST_RECEIVED);
         if (!userStorage.getAll().containsKey(id) || !userStorage.getAll().containsKey(otherId)) {
             log.error("Ошибка 404, пользователь не был найден в списке");
             throw new UserNotFoundException("Пользователь не найден.");
@@ -63,11 +55,9 @@ public class UserService {
         List<User> commonFriends = new ArrayList<>();
         Set<Long> friends1 = userStorage.get(id).getFriends();
         Set<Long> friends2 = userStorage.get(otherId).getFriends();
-        for (Long friendId1 : friends1) {
-            for (Long friendId2 : friends2) {
-                if (friendId1.equals(friendId2)) {
-                    commonFriends.add(userStorage.get(friendId1));
-                }
+        for (Long friendId : friends1) {      // Теперь выполняется только одно обращение к хранилищу для каждого юзера
+            if (friends2.contains(friendId)) {
+                commonFriends.add(userStorage.get(friendId));
             }
         }
         commonFriends.remove(userStorage.get(id));
@@ -77,7 +67,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        log.info(POST_REQUEST_RECEIVED);
         validationCheck(user);
         generatorId++;
         user.setId(generatorId);
@@ -88,7 +77,6 @@ public class UserService {
     }
 
     public User addFriend(Long id, Long friendId) {
-        log.info(PUT_REQUEST_RECEIVED);
         if (!userStorage.getAll().containsKey(id) || !userStorage.getAll().containsKey(friendId)) {
             log.error("Ошибка 404, пользователь не был найден в списке");
             throw new UserNotFoundException("Пользователь не найден.");
@@ -104,7 +92,6 @@ public class UserService {
     }
 
     public User deleteFriend(Long id, Long friendId) {
-        log.info(DELETE_REQUEST_RECEIVED);
         if (!userStorage.getAll().containsKey(id) || !userStorage.getAll().containsKey(friendId)) {
             log.error("Ошибка 404, пользователь не был найден в списке");
             throw new UserNotFoundException("Пользователь не найден.");
@@ -120,7 +107,6 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        log.info(PUT_REQUEST_RECEIVED);
         validationCheck(user);
         validationCheckPUTMethod(user);
         log.info("Пользователь до изменений: " + userStorage.get(user.getId()));
