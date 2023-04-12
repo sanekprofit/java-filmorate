@@ -20,10 +20,6 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private static final String GET_REQUEST_RECEIVED = "Получен GET запрос";
-    private static final String POST_REQUEST_RECEIVED = "Получен POST запрос";
-    private static final String PUT_REQUEST_RECEIVED = "Получен PUT запрос";
-    private static final String DELETE_REQUEST_RECEIVED = "Получен DELETE запрос";
 
     private int generatorId = 0;
 
@@ -33,13 +29,11 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms() {
-        log.info(GET_REQUEST_RECEIVED);
         log.info("Список фильмов: " + filmStorage.getAll().values());
         return new ArrayList<>(filmStorage.getAll().values());
     }
 
     public Film getFilm(Integer filmId) {
-        log.info(GET_REQUEST_RECEIVED);
         if (!filmStorage.getAll().containsKey(filmId)) {
             log.error("Ошибка 404, фильм не был найден в списке.");
             throw new FilmNotFoundException("Искомый фильм не был найден.");
@@ -49,7 +43,6 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        log.info(POST_REQUEST_RECEIVED);
         validationCheck(film);
         generatorId++;
         film.setId(generatorId);
@@ -60,7 +53,6 @@ public class FilmService {
     }
 
     public Film addLike(Integer filmId, Long userId) {
-        log.info(PUT_REQUEST_RECEIVED);
         if (!filmStorage.getAll().containsKey(filmId)) {
             log.error("Ошибка 404, фильм не был найден в списке.");
             throw new FilmNotFoundException("Искомый фильм не был найден.");
@@ -75,7 +67,6 @@ public class FilmService {
     }
 
     public List<Film> getMostLikedFilms(Integer count) {
-        log.info(GET_REQUEST_RECEIVED);
         List<Film> result;
         if (count == null || count <= 0) {
             throw new IllegalArgumentException();
@@ -90,7 +81,6 @@ public class FilmService {
     }
 
     public Film removeLike(Integer filmId, Long userId) {
-        log.info(DELETE_REQUEST_RECEIVED);
         if (!filmStorage.getAll().containsKey(filmId)) {
             log.error("Ошибка 404, фильм не был найден в списке.");
             throw new FilmNotFoundException("Искомый фильм не был найден.");
@@ -105,7 +95,6 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        log.info(PUT_REQUEST_RECEIVED);
         validationCheck(film);
         validationCheckPUTMethod(film);
         log.info("Фильм до правок: " + filmStorage.get(film.getId()));
