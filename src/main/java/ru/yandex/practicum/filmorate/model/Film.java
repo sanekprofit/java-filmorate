@@ -13,4 +13,6 @@ public class Film {
     private LocalDate releaseDate;
     private Set<Long> likes;
     private int duration;
+    private Set<String> genre;
+    private MPA mpaRating;
 }

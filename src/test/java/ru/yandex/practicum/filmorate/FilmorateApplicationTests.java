@@ -83,13 +83,11 @@ class FilmorateApplicationTests {
 
     @Test
     void tooLongFilmDescriptionShouldReturnValidationException() {
+        String longString = "x".repeat(201);
         Film film = new Film();
         film.setId(1);
         film.setName(name);
-        film.setDescription("very looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-                "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-                "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +
-                "ng description");
+        film.setDescription(longString);
         film.setReleaseDate(releaseDate);
         film.setDuration(duration);
         assertThrows(ValidationException.class, () -> fc.createFilm(film));
