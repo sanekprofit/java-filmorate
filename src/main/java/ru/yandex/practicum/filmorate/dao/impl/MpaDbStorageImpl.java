@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.storage.MpaDbStorage;
+import ru.yandex.practicum.filmorate.exceptions.IdNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class MpaDbStorageImpl implements MpaDbStorage {
         return jdbcTemplate.query(sql, (rs) -> {
             Mpa mpa = new Mpa();
             mpa.setId(rs.getInt("mpa_id"));
-            mpa.setTitle(rs.getString("title"));
+            mpa.setName(rs.getString("title"));
             return mpa;
         });
     }
@@ -36,12 +37,12 @@ public class MpaDbStorageImpl implements MpaDbStorage {
             return jdbcTemplate.query(sql, (rs) -> {
                 Mpa mpa = new Mpa();
                 mpa.setId(rs.getInt("mpa_id"));
-                mpa.setTitle(rs.getString("title"));
+                mpa.setName(rs.getString("title"));
                 return mpa;
             }, id);
         } else {
             log.error("Ошибка 404, не найден рейтинг MPA с ID " + id);
-            throw new IllegalArgumentException();
+            throw new IdNotFoundException("Айди не найден");
         }
     }
 }

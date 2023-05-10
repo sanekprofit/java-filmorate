@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.storage.GenreDbStorage;
+import ru.yandex.practicum.filmorate.exceptions.IdNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public class GenreDbStorageImpl implements GenreDbStorage {
         return jdbcTemplate.query(sql, (rs) -> {
             Genre genre = new Genre();
             genre.setId(rs.getInt("genre_id"));
-            genre.setTitle(rs.getString("title"));
+            genre.setName(rs.getString("title"));
             return genre;
         });
     }
@@ -36,12 +37,12 @@ public class GenreDbStorageImpl implements GenreDbStorage {
             return jdbcTemplate.query(sql, (rs) -> {
                 Genre genre = new Genre();
                 genre.setId(rs.getInt("genre_id"));
-                genre.setTitle(rs.getString("title"));
+                genre.setName(rs.getString("title"));
                 return genre;
             }, id);
         } else {
             log.error("Ошибка 404, не найден жанр с ID " + id);
-            throw new IllegalArgumentException();
+            throw new IdNotFoundException("Айди не найден");
         }
     }
 }

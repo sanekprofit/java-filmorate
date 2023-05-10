@@ -97,7 +97,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
 
         Mpa mpaRating = film.getMpa();
         if (mpaRating != null) {
-            mpaRating.setTitle(jdbcTemplate.queryForObject("SELECT title FROM mpa WHERE mpa_id = ?",
+            mpaRating.setName(jdbcTemplate.queryForObject("SELECT title FROM mpa WHERE mpa_id = ?",
                     (rs, rowNum) -> rs.getString("title"),
                     mpaRating.getId()));
             jdbcTemplate.update("INSERT INTO mpa_list (film_id, mpa_id) VALUES (?, ?)", id, mpaRating.getId());
@@ -106,7 +106,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         Set<Genre> genres = film.getGenres();
         if (genres != null) {
             for (Genre genre : genres) {
-                genre.setTitle(jdbcTemplate.queryForObject("SELECT title FROM genre WHERE genre_id = ?",
+                genre.setName(jdbcTemplate.queryForObject("SELECT title FROM genre WHERE genre_id = ?",
                         (rs, rowNum) -> rs.getString("title"),
                         genre.getId()));
                 jdbcTemplate.update("INSERT INTO genre_list (film_id, genre_id) VALUES (?, ?)", id, genre.getId());
@@ -127,10 +127,14 @@ public class FilmDbStorageImpl implements FilmDbStorage {
             log.error("Ошибка 404, пользователь не был найден в базе данных");
             throw new UserNotFoundException("Пользователь не найден.");
         }
+        Film film = getFilm(filmId);
+        if (film == null) {
+            log.error("Ошибка 404, фильм не был найден в базе данных");
+            throw new FilmNotFoundException("Пользователь не найден.");
+        }
         String sql = "UPDATE films SET likes = likes + 1 WHERE film_id = ?";
         jdbcTemplate.update(sql, filmId);
 
-        Film film = getFilm(filmId);
         film.getLikes().add(userId);
         return film;
     }
@@ -173,12 +177,16 @@ public class FilmDbStorageImpl implements FilmDbStorage {
             log.error("Ошибка 404, пользователь не был найден в базе данных");
             throw new UserNotFoundException("Пользователь не найден.");
         }
+        Film film = getFilm(filmId);
+        if (film == null) {
+            log.error("Ошибка 404, фильм не был найден в базе данных");
+            throw new FilmNotFoundException("Пользователь не найден.");
+        }
         String sql = "UPDATE films SET likes = likes - 1 WHERE film_id = ?";
         jdbcTemplate.update(sql, filmId);
         Set<Long> likes = jdbcTemplate.queryForObject("SELECT likes " +
                 "FROM films " +
                 "WHERE film_id = ?", (rs, rowNum) -> Set.of(rs.getLong("likes")), filmId);
-        Film film = getFilm(filmId);
         film.setLikes(likes);
         return film;
     }
@@ -202,7 +210,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         Mpa mpaRating = film.getMpa();
         Set<Genre> genres = film.getGenres();
         if (mpaRating != null) {
-            mpaRating.setTitle(jdbcTemplate.queryForObject("SELECT title " +
+            mpaRating.setName(jdbcTemplate.queryForObject("SELECT title " +
                     "FROM mpa " +
                     "WHERE mpa_id = ?", (rs, rowNum) -> rs.getString("title"), mpaRating.getId()));
             jdbcTemplate.update("UPDATE mpa_list " +
@@ -211,7 +219,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         }
         if (genres != null) {
             for (Genre genre : genres) {
-                genre.setTitle(jdbcTemplate.queryForObject("SELECT title FROM genre WHERE genre_id = ?",
+                genre.setName(jdbcTemplate.queryForObject("SELECT title FROM genre WHERE genre_id = ?",
                         (rs, rowNum) -> rs.getString("title"),
                         genre.getId()));
                 jdbcTemplate.update("UPDATE genre_list " +
@@ -243,18 +251,18 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         } else {
             Mpa mpa = new Mpa();
             mpa.setId(id);
-            mpa.setTitle(name);
+            mpa.setName(name);
             return mpa;
         }
     }
 
     private Set<Genre> getGenres(Integer id, String genreString) {
         if (genreString == null || id == null) {
-            return null;
+            return new HashSet<>();
         } else {
             Genre genre = new Genre();
             genre.setId(id);
-            genre.setTitle(genreString);
+            genre.setName(genreString);
             return Set.of(genre);
         }
     }

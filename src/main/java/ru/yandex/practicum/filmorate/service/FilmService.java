@@ -27,7 +27,6 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        log.info("Фильм: {}", film);
         validationCheck(film);
         return filmDbStorage.createFilm(film);
     }
@@ -50,7 +49,7 @@ public class FilmService {
     }
 
     private void validationCheck(Film film) {
-        if (film.toString().contains("name=null") || film.getName().isBlank()) {
+        if (film.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым.");
         }
         if (film.getDescription().length() > 200) {
