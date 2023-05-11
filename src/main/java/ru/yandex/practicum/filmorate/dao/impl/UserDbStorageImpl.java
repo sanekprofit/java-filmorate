@@ -19,7 +19,7 @@ public class UserDbStorageImpl implements UserDbStorage {
     private long nextUserId = 0;
 
     public UserDbStorageImpl(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate=jdbcTemplate;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -38,9 +38,9 @@ public class UserDbStorageImpl implements UserDbStorage {
 
 
     @Override
-    public User getUser(Long user_id) {
+    public User getUser(Long userId) {
         List<Long> userIds = jdbcTemplate.queryForList("SELECT user_id FROM FILMORATE_USER", Long.class);
-        if (!userIds.contains(user_id)) {
+        if (!userIds.contains(userId)) {
             log.error("Ошибка 404, пользователь не был найден в базе данных");
             throw new UserNotFoundException("Пользователь не найден.");
         }
@@ -54,11 +54,11 @@ public class UserDbStorageImpl implements UserDbStorage {
             user.setBirthday(rs.getDate("birthday").toLocalDate());
             log.info("Найденый пользователь: {}", user);
             return user;
-        }, user_id);
+        }, userId);
     }
 
     @Override
-    public List<User> getUserFriends(Long user_id) {
+    public List<User> getUserFriends(Long userId) {
         String sql = "SELECT u.user_id, u.email, u.login, u.name, u.birthday " +
                 "FROM filmorate_user AS u " +
                 "JOIN user_friends AS uf ON u.user_id = uf.friend_id " +
@@ -72,7 +72,7 @@ public class UserDbStorageImpl implements UserDbStorage {
             user.setBirthday(rs.getDate("birthday").toLocalDate());
             log.info("Найденые друзья: {}", user);
             return user;
-        }, user_id);
+        }, userId);
     }
 
     @Override
