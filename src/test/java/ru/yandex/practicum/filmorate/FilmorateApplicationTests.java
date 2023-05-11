@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -311,6 +310,7 @@ class FilmorateApplicationTests {
         Film noLikedFilm = filmDbStorage.removeLike(noLikeFilm.getId(), user.getId());
         assertThat(noLikedFilm).hasFieldOrPropertyWithValue("likes", Set.of(0L));
     }
+
     @Test
     void testGetMostLikedFilms() {
         User user = new User();
