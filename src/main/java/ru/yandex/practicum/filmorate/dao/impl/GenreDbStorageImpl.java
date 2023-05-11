@@ -19,9 +19,9 @@ public class GenreDbStorageImpl implements GenreDbStorage {
     }
 
     @Override
-    public Genre getGenre() {
+    public List<Genre> getGenres() {
         String sql = "SELECT * FROM genre";
-        return jdbcTemplate.query(sql, (rs) -> {
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Genre genre = new Genre();
             genre.setId(rs.getInt("genre_id"));
             genre.setName(rs.getString("title"));
@@ -34,7 +34,7 @@ public class GenreDbStorageImpl implements GenreDbStorage {
         List<Integer> genreIds = jdbcTemplate.queryForList("SELECT genre_id FROM genre", Integer.class);
         if (genreIds.contains(id)) {
             String sql = "SELECT * FROM genre WHERE genre_id = ?";
-            return jdbcTemplate.query(sql, (rs) -> {
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 Genre genre = new Genre();
                 genre.setId(rs.getInt("genre_id"));
                 genre.setName(rs.getString("title"));
@@ -45,4 +45,5 @@ public class GenreDbStorageImpl implements GenreDbStorage {
             throw new IdNotFoundException("Айди не найден");
         }
     }
+
 }

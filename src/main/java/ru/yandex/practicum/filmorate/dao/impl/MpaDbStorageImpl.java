@@ -19,9 +19,9 @@ public class MpaDbStorageImpl implements MpaDbStorage {
     }
 
     @Override
-    public Mpa getMpa() {
+    public List<Mpa> getMpa() {
         String sql = "SELECT * FROM mpa";
-        return jdbcTemplate.query(sql, (rs) -> {
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Mpa mpa = new Mpa();
             mpa.setId(rs.getInt("mpa_id"));
             mpa.setName(rs.getString("title"));
@@ -34,7 +34,7 @@ public class MpaDbStorageImpl implements MpaDbStorage {
         List<Integer> mpaIds = jdbcTemplate.queryForList("SELECT mpa_id FROM mpa", Integer.class);
         if (mpaIds.contains(id)) {
             String sql = "SELECT * FROM mpa WHERE mpa_id = ?";
-            return jdbcTemplate.query(sql, (rs) -> {
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
                 Mpa mpa = new Mpa();
                 mpa.setId(rs.getInt("mpa_id"));
                 mpa.setName(rs.getString("title"));

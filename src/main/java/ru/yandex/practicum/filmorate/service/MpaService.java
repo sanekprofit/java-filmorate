@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.storage.MpaDbStorage;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+import java.util.List;
+
 @Service
 public class MpaService {
     private final MpaDbStorage mpaDbStorage;
@@ -12,7 +14,7 @@ public class MpaService {
         this.mpaDbStorage = mpaDbStorage;
     }
 
-    public Mpa getMpa() {
+    public List<Mpa> getMpa() {
         return mpaDbStorage.getMpa();
     }
 

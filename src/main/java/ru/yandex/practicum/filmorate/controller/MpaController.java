@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/mpa")
@@ -20,7 +22,7 @@ public class MpaController {
     }
 
     @GetMapping
-    public Mpa getMpa() {
+    public List<Mpa> getMpa() {
         log.info(GET_REQUEST_RECEIVED);
         return mpaService.getMpa();
     }
