@@ -36,6 +36,12 @@ public class UserDbStorageImpl implements UserDbStorage {
         });
     }
 
+    /*
+    Не согласен по поводу удаление кода проверки на наличие пользователя в базе данных.
+    Если я уберу его то возвращаемый статус кода будет 500, так как будет выкинуто-
+    -не обработанное исключение(какое именно я не знаю).
+    А если код статуса будет 500 то некоторые тесты не пройдут проверку.
+     */
     @Override
     public User getUser(Long userId) {
         List<Long> userIds = jdbcTemplate.queryForList("SELECT user_id FROM FILMORATE_USER", Long.class);

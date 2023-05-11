@@ -7,6 +7,9 @@ birthday date,
 PRIMARY KEY (user_id)
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS USER_EMAIL_UINDEX ON FILMORATE_USER (email);
+CREATE UNIQUE INDEX IF NOT EXISTS USER_LOGIN_UINDEX ON FILMORATE_USER (login);
+
 CREATE TABLE IF NOT EXISTS user_friends (
 user_id int,
 friend_id int,
@@ -26,7 +29,7 @@ release_date date
 
 CREATE TABLE IF NOT EXISTS mpa (
 mpa_id int PRIMARY KEY,
-title varchar
+title varchar(10)
 );
 
 CREATE TABLE IF NOT EXISTS mpa_list (
@@ -39,7 +42,7 @@ FOREIGN KEY (mpa_id) REFERENCES mpa(mpa_id)
 
 CREATE TABLE IF NOT EXISTS genre (
 genre_id int PRIMARY KEY,
-title varchar
+title varchar(18)
 );
 
 CREATE TABLE IF NOT EXISTS genre_list (

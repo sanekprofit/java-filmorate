@@ -245,7 +245,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         if (likes == null) {
             return new HashSet<>();
         } else {
-            return Collections.singleton(likes);
+            return Set.of(likes);
         }
     }
 
