@@ -149,7 +149,6 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         return film;
     }
 
-
     @Override
     public List<Film> getMostLikedFilms(Integer limit) {
         if (limit == null || limit < 0) {
@@ -167,7 +166,6 @@ public class FilmDbStorageImpl implements FilmDbStorage {
             return allFilms.subList(0, limit);
         }
     }
-
 
     @Override
     public Film removeLike(Integer filmId, Long userId) {
@@ -234,8 +232,6 @@ public class FilmDbStorageImpl implements FilmDbStorage {
         return film;
     }
 
-
-
     private Integer getNextFilmId() {
         nextFilmId++;
         return nextFilmId;
@@ -275,6 +271,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
             return genres;
         }
     }
+
     private Set<Genre> getGenres(int filmId) {
         String sql = "SELECT g.genre_id, g.title AS name " +
                 "FROM genre_list AS gl " +
