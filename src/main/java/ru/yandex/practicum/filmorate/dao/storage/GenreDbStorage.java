@@ -7,6 +7,9 @@ import java.util.List;
 
 @Repository
 public interface GenreDbStorage {
+
     List<Genre> getGenres();
+
     Genre getGenreById(Integer id);
+
 }

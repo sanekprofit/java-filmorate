@@ -7,6 +7,9 @@ import java.util.List;
 
 @Repository
 public interface MpaDbStorage {
+
     List<Mpa> getMpa();
+
     Mpa getMpaById(Integer id);
+
 }
