@@ -18,7 +18,7 @@ public class UserDbStorageImpl implements UserDbStorage {
     private final JdbcTemplate jdbcTemplate;
     private long nextUserId = 0;
 
-    public UserDbStorageImpl(JdbcTemplate jdbcTemplate){
+    public UserDbStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -35,7 +35,6 @@ public class UserDbStorageImpl implements UserDbStorage {
             return user;
         });
     }
-
 
     @Override
     public User getUser(Long userId) {
@@ -156,7 +155,6 @@ public class UserDbStorageImpl implements UserDbStorage {
         }
         return user;
     }
-
 
     @Override
     public User deleteFriend(Long id, Long friendId) {
